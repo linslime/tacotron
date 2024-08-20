@@ -60,17 +60,10 @@ def main(args):
             except:
                 raise TypeError("not same dimension")
 
-            if use_cuda:
-                characters = Variable(torch.from_numpy(data[0]).type(torch.cuda.LongTensor), requires_grad=False).cuda()
-                mel_input = Variable(torch.from_numpy(mel_input).type(torch.cuda.FloatTensor), requires_grad=False).cuda()
-                mel_spectrogram = Variable(torch.from_numpy(data[2]).type(torch.cuda.FloatTensor), requires_grad=False).cuda()
-                linear_spectrogram = Variable(torch.from_numpy(data[1]).type(torch.cuda.FloatTensor), requires_grad=False).cuda()
-
-            else:
-                characters = Variable(torch.from_numpy(data[0]).type(torch.LongTensor), requires_grad=False)
-                mel_input = Variable(torch.from_numpy(mel_input).type(torch.FloatTensor), requires_grad=False)
-                mel_spectrogram = Variable(torch.from_numpy(data[2]).type(torch.FloatTensor), requires_grad=False)
-                linear_spectrogram = Variable(torch.from_numpy(data[1]).type(torch.FloatTensor), requires_grad=False)
+            characters = Variable(torch.from_numpy(data[0]).type(torch.LongTensor), requires_grad=False)
+            mel_input = Variable(torch.from_numpy(mel_input).type(torch.FloatTensor), requires_grad=False)
+            mel_spectrogram = Variable(torch.from_numpy(data[2]).type(torch.FloatTensor), requires_grad=False)
+            linear_spectrogram = Variable(torch.from_numpy(data[1]).type(torch.FloatTensor), requires_grad=False)
 
             # Forward
             mel_output, linear_output = model.forward(characters, mel_input)
