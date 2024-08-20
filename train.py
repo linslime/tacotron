@@ -8,7 +8,6 @@ import time
 import torch
 import torch.nn as nn
 
-use_cuda = torch.cuda.is_available()
 
 def main(args):
 
@@ -16,10 +15,7 @@ def main(args):
     dataset = get_dataset()
 
     # Construct model
-    if use_cuda:
-        model = nn.DataParallel(Tacotron().cuda())
-    else:
-        model = Tacotron()
+    model = Tacotron()
 
     # Make optimizer
     optimizer = optim.Adam(model.parameters(), lr=hp.lr)
@@ -42,10 +38,7 @@ def main(args):
         os.mkdir(hp.checkpoint_path)
 
     # Decide loss function
-    if use_cuda:
-        criterion = nn.L1Loss().cuda()
-    else:
-        criterion = nn.L1Loss()
+    criterion = nn.L1Loss()
 
     # Loss for frequency of human register
     n_priority_freq = int(3000 / (hp.sample_rate * 0.5) * hp.num_freq)
@@ -53,7 +46,7 @@ def main(args):
     for epoch in range(hp.epochs):
 
         dataloader = DataLoader(dataset, batch_size=args.batch_size,
-                                shuffle=True, collate_fn=collate_fn, drop_last=True, num_workers=8)
+                                shuffle=True, collate_fn=collate_fn, drop_last=True, num_workers=0)
 
         for i, data in enumerate(dataloader):
 
@@ -87,7 +80,7 @@ def main(args):
             linear_loss = torch.abs(linear_output-linear_spectrogram)
             linear_loss = 0.5 * torch.mean(linear_loss) + 0.5 * torch.mean(linear_loss[:,:n_priority_freq,:])
             loss = mel_loss + linear_loss
-            loss = loss.cuda()
+            loss = loss
 
             start_time = time.time()
 

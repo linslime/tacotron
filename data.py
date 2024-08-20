@@ -4,7 +4,7 @@ from torch.utils.data import Dataset, DataLoader
 import os
 import librosa
 import numpy as np
-from Tacotron.text import text_to_sequence
+from text import text_to_sequence
 import collections
 from scipy import signal
 
@@ -28,8 +28,8 @@ class LJDatasets(Dataset):
         return len(self.landmarks_frame)
 
     def __getitem__(self, idx):
-        wav_name = os.path.join(self.root_dir, self.landmarks_frame.ix[idx, 0]) + '.wav'
-        text = self.landmarks_frame.ix[idx, 1]
+        wav_name = os.path.join(self.root_dir, self.landmarks_frame.loc[idx, 0]) + '.wav'
+        text = self.landmarks_frame.loc[idx, 1]
         text = np.asarray(text_to_sequence(text, [hp.cleaners]), dtype=np.int32)
         wav = np.asarray(self.load_wav(wav_name)[0], dtype=np.float32)
         sample = {'text': text, 'wav': wav}
@@ -80,7 +80,7 @@ def _linear_to_mel(spectrogram):
 
 def _build_mel_basis():
     n_fft = (hp.num_freq - 1) * 2
-    return librosa.filters.mel(hp.sample_rate, n_fft, n_mels=hp.num_mels)
+    return librosa.filters.mel(sr=hp.sample_rate, n_fft=n_fft, n_mels=hp.num_mels)
 
 def _normalize(S):
     return np.clip((S - hp.min_level_db) / -hp.min_level_db, 0, 1)
