@@ -46,10 +46,14 @@ def main(args):
     for epoch in range(hp.epochs):
 
         dataloader = DataLoader(dataset, batch_size=args.batch_size,
-                                shuffle=True, collate_fn=collate_fn, drop_last=True, num_workers=0)
+                                shuffle=False, collate_fn=collate_fn, drop_last=True, num_workers=0)
 
         for i, data in enumerate(dataloader):
-
+            """
+            data[0]:文本
+            data[1]:音频频域数据
+            data[2]:音频梅尔频谱数据
+            """
             current_step = i + args.restore_step + epoch * len(dataloader) + 1
 
             optimizer.zero_grad()
