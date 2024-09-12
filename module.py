@@ -6,7 +6,7 @@ from collections import OrderedDict
 import numpy as np
 import hyperparams as hp
 
-use_cuda = torch.cuda.is_available()
+use_cuda = False
 
 class SeqLinear(nn.Module):
     """
